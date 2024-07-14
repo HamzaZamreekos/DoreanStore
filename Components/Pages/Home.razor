@@ -1,12 +1,22 @@
 ﻿@page "/"
 @inject FdroidService _is
 @inject IOService _io
+@inject GenericRepository<ApplicationInfo> _repo
+@using DoreanStore.Models
+@using DoreanStore.Repositories
 @using DoreanStore.Services
+@inject IJSRuntime js
+@applicationInfo.Age
+<InputNumber @bind-Value="@applicationInfo.Age"></InputNumber>
 
-Welcome to your new app.
 @code{
+    ApplicationInfo applicationInfo;
     protected override async Task OnInitializedAsync(){
-        await _is.DownloadIndex();
-        _io.DeserializeFdroidRepo();
+        var result = _repo.Add(new ApplicationInfo{Age = 1});
+        applicationInfo = result;
+        applicationInfo!.PropertyChanged += (sender, eventArgs) =>
+        {
+            StateHasChanged();
+        };
     }
 }

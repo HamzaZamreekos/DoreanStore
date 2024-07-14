@@ -22,19 +22,36 @@ public class GenericRepository<T> where T : RealmObject
         realm = Realm.GetInstance(new RealmConfiguration(pathUri));
         iOService.CopyFileToAppDataDirectory(dbName, false).Wait();
     }
-    public T Update(T toUpdate)
+    /// <summary>
+    /// Hands a reference to the realm instace the repository uses, So that it could be used to update entities in the database 
+    /// </summary>
+    /// <returns>Reference to a realm</returns>
+    public Realm ReturnRealmInstance()
     {
-        realm.Write(() =>
-        {
-            toUpdate = realm.Add(toUpdate, update: true);
-        });
-        return toUpdate;
+        return realm;
     }
-    public T Add(T toAdd)
+    public T? Get(Guid id)
+    {
+        return realm.Find<T>(id);
+    }
+    public IEnumerable<T>? GetAll()
+    {
+        return realm.All<T>();
+    }
+    //public T? Update(T toUpdate)
+    //{
+    //    using (var transaction = realm.BeginWrite())
+    //    {
+    //        toUpdate = realm.Add(toUpdate, update: true);
+    //        transaction.Commit();
+    //    }
+    //    return toUpdate;
+    //}
+    public T? Add(T toAdd)
     {
         realm.Write(() =>
         {
-            toAdd = realm.Add<T>(toAdd);
+            toAdd = realm.Add<T>(toAdd, update:false);
         });
         return toAdd;
     }

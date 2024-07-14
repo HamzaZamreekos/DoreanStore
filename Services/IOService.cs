@@ -1,4 +1,5 @@
 ﻿using DoreanStore.Models;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,41 @@ namespace DoreanStore.Services
         {
             this.jsonService = jsonService;
         }
+        /// <summary>
+        /// Requests permissions to install apps if persmission wasn't granted before, Then installs the apk
+        /// </summary>
+        /// <param name="name"></param>
+        public void InstallApk(string name)
+        {
+#if Android
+            string _apkPath = Path.Combine(FileSystem.Current.AppDataDirectory, name);
+              var packageManager = Platform.CurrentActivity!.PackageManager;
+            var res = packageManager!.CanRequestPackageInstalls();
+            if (!res)
+            {
+                Platform.CurrentActivity.StartActivity(new Android.Content.Intent(Android.Provider.Settings.ActionManageUnknownAppSources!, Android.Net.Uri.Parse("package:" + AppInfo.Current.PackageName)));
+            }else
+            {
+               
+                var context = Platform.AppContext;
+                Java.IO.File apkFile = new Java.IO.File(_apkPath);
+                var res1=apkFile.Exists();
+                Android.Content.Intent intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
 
+
+               var uri = FileProvider.GetUriForFile(context, context.ApplicationContext!.PackageName + ".fileProvider", apkFile);
+
+                intent.SetDataAndType(uri, "application/vnd.android.package-archive");
+                intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+                intent.AddFlags(Android.Content.ActivityFlags.GrantReadUriPermission);
+                intent.AddFlags(Android.Content.ActivityFlags.ClearTop);
+                intent.PutExtra(Android.Content.Intent.ExtraNotUnknownSource, true);
+                intent.PutExtra("apkPath", _apkPath);
+
+               Platform.CurrentActivity.StartActivityForResult(intent, 1);
+            }
+#endif
+        }
         /// <summary>
         /// Opens the index json file as a stream, and uses the JsonService to deserialize it
         /// </summary>
