@@ -12,11 +12,12 @@
 @code{
     ApplicationInfo applicationInfo;
     protected override async Task OnInitializedAsync(){
-        var result = _repo.Add(new ApplicationInfo{Age = 1});
-        applicationInfo = result;
-        applicationInfo!.PropertyChanged += (sender, eventArgs) =>
-        {
-            StateHasChanged();
-        };
+        _io.DeserializeFdroidRepo();
+        // var result = _repo.Add(new ApplicationInfo{Age = 1});
+        // applicationInfo = result;
+        // applicationInfo!.PropertyChanged += (sender, eventArgs) =>
+        // {
+        //     StateHasChanged();
+        // };
     }
 }

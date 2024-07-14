@@ -11,6 +11,7 @@ namespace DoreanStore.Services
     {
         public T DeserializeFromStream<T>(Stream s)
         {
+
             using (StreamReader reader = new StreamReader(s))
             using (JsonTextReader jsonReader = new JsonTextReader(reader))
             {
