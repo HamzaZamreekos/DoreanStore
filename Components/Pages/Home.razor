@@ -6,15 +6,12 @@
 @using DoreanStore.Repositories
 @using DoreanStore.Services
 @inject IJSRuntime js
-@applicationInfo.Age
-<InputNumber @bind-Value="@applicationInfo.Age"></InputNumber>
 
 @code{
     ApplicationInfo applicationInfo;
     protected override async Task OnInitializedAsync(){
-        _io.DeserializeFdroidRepo();
-        // var result = _repo.Add(new ApplicationInfo{Age = 1});
-        // applicationInfo = result;
+
+
         // applicationInfo!.PropertyChanged += (sender, eventArgs) =>
         // {
         //     StateHasChanged();

@@ -1,6 +1,22 @@
-﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+﻿@using DoreanStore.Repositories
+@using DoreanStore.Services
+<Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
 </Router>
+@code{
+    [Inject]
+    private IOService io { get; set; }
+    [Inject]
+    private IndexRepository indexRepository{ get; set; }
+    [Inject]
+    private FdroidService Fdroid{ get; set; }
+    protected override async Task OnInitializedAsync(){
+        await io.CopyFileToAppDataDirectory("dbe.realm", false);
+        await Fdroid.DownloadIndex();
+        await io.DeserializeFdroidRepoAsync();
+        await indexRepository.ConvertIndexToAppInfoAndSave();
+    }
+}

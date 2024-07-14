@@ -51,17 +51,17 @@ namespace DoreanStore.Services
 #endif
         }
         /// <summary>
-        /// Opens the index json file as a stream, and uses the JsonService to deserialize it
+        /// Opens the index json file as a stream, and uses the JsonService to deserialize it asynchronously
         /// </summary>
         /// <returns>The deserialized index file</returns>
-        public RepoResponse? DeserializeFdroidRepo()
+        public async Task<RepoResponse?> DeserializeFdroidRepoAsync()
         {
             RepoResponse response;
             string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, "indexJson");
 
             using (var fs = new FileStream(pathUri, FileMode.Open))
             {
-                var deserializedResponse = jsonService.DeserializeFromStream<RepoResponse>(fs);
+                var deserializedResponse = await Task.Run(()=> jsonService.DeserializeFromStream<RepoResponse>(fs));
                 response = deserializedResponse;
             }
             return response;
@@ -77,9 +77,11 @@ namespace DoreanStore.Services
             if(!overwrite)
                 if (System.IO.File.Exists(newPath))
                     return; 
-            using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
-            using FileStream outputStream = System.IO.File.Create(newPath);
+            Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
+            FileStream outputStream = System.IO.File.Create(newPath);
             await inputStream.CopyToAsync(outputStream);
+            outputStream.Dispose();
+            inputStream.Dispose();
         }
     }
 }

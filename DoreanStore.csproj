@@ -58,7 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="resources\raw\db.realm" />
+      <None Remove="resources\raw\dbe.realm" />
     </ItemGroup>
 
     <ItemGroup>
@@ -71,6 +71,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Resources\Raw\" />
       <Folder Include="wwwroot\Db\" />
     </ItemGroup>
 

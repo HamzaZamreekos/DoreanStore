@@ -12,15 +12,14 @@ namespace DoreanStore.Repositories;
 public class GenericRepository<T> where T : RealmObject
 {
     private readonly Realm realm;
-    private readonly IOService iOService;
-    private static string dbName =  "db.realm";
+    private static string dbName =  "dbe.realm";
+    private readonly IOService io;
 
     public GenericRepository(IOService iOService)
     {
-        this.iOService = iOService;
+        io = iOService;
         string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, dbName);
         realm = Realm.GetInstance(new RealmConfiguration(pathUri));
-        iOService.CopyFileToAppDataDirectory(dbName, false).Wait();
     }
     /// <summary>
     /// Hands a reference to the realm instace the repository uses, So that it could be used to update entities in the database 

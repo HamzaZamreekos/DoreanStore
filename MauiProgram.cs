@@ -20,6 +20,7 @@ namespace DoreanStore
             builder.Services.AddScoped<FdroidService>();
             builder.Services.AddScoped<IOService>();
             builder.Services.AddScoped<JsonService>();
+            builder.Services.AddScoped<IndexRepository>();
             builder.Services.AddSingleton(typeof(GenericRepository<>));
 #if DEBUG
     		builder.Services.AddBlazorWebViewDeveloperTools();

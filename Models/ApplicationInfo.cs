@@ -11,17 +11,23 @@ namespace DoreanStore.Models;
 public partial class ApplicationInfo : RealmObject
 {
     [PrimaryKey]
-    public Guid id { get; set; } = Guid.NewGuid();
-    public DateTime LastUpdated { get; set; }
-    public DateTime ReleaseDate { get; set; }
-    public List<Apk> Apks { get; set; } = new();
-    public string? ImageUrl { get; set; }
-    List<string> Screenshots { get; set; } = new();
+    public string UniqueName { get; set; }
+    public string? ProjectUrl { get; set; }
+    public string? Summary { get; set; }
+    public string? Description { get; set; }
+    public string? IconUrl { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
+    public DateTimeOffset ReleaseDate { get; set; }
+    public IList<Apk> Apks { get; } = new List<Apk>();
+    public IList<string>? Categories { get;} = new List<string>();
+    public IList<string>? ScreenshotsUrl { get; } = new List<string>();
+    public IList<string>? Permissions { get; } = new List<string>();
 
 }
 public partial class Apk : RealmObject
 {
-    public string Urls { get; set; }
+    [PrimaryKey]
+    public string Url { get; set; }
     public int Size { get; set; }
 }
 
