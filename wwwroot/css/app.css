@@ -1,7 +1,10 @@
 ﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-
+body {
+    background-color: #fefefe;
+    background-image: repeating-radial-gradient( circle at 54px 32px, transparent 0, #fefefe 24px ), repeating-linear-gradient(#5394fd55, #5394fd);
+}
 a, .btn-link {
     color: #006bb7;
 }

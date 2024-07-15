@@ -1,7 +1,7 @@
 ﻿@if(App.IconUrl is not null)
 {
     string imageUrl = LinkProvider.RepoLink + App.IconUrl;
-    <MudCard Style="max-width:100px;min-width:100px; min-height:143px">
+    <MudCard Elevation="4" Style="max-width:100px;min-width:100px; min-height:143px; border:20px;border-color:#5394fd">
         <MudCardMedia Image="@imageUrl" Height="60" />
         <MudCardContent>
             @if (App.DisplayName is not null)

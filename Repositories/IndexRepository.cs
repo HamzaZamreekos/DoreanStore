@@ -101,7 +101,6 @@ namespace DoreanStore.Repositories
                 {
                     realm.Add(applicationInfo, update: true);
                 });
-                Debug.WriteLine("Added record.....................................");
 
             }
         }
