@@ -1,5 +1,39 @@
-﻿<h3>AppCard</h3>
+﻿@if(App.IconUrl is not null)
+{
+    string imageUrl = LinkProvider.RepoLink + App.IconUrl;
+    <MudCard Style="max-width:100px;min-width:100px; min-height:143px">
+        <MudCardMedia Image="@imageUrl" Height="60" />
+        <MudCardContent>
+            @if (App.DisplayName is not null)
+            {
+                @if (App.DisplayName.Length > 10)
+                {
+                    <MudText Style="font-size:10px">@App.DisplayName.Substring(0, 10) ..</MudText>
+                }
+                else
+                {
+                    <MudText Style="font-size:10px">@App.DisplayName</MudText>
+
+                }
+            }
+            
+            @if(App.Summary is not null)
+            {
+                @if(App.Summary.Length > 31)
+                {
+                    <MudText Style="font-size:8px">@App.Summary.Substring(0, 31)..</MudText>
+                }
+                else
+                {
+                    <MudText Style="font-size:8px">@App.Summary</MudText>
+
+                }
+            }
+        </MudCardContent>
+    </MudCard>
+}
 
 @code {
-
+    [Parameter]
+    public ApplicationInfo App{ get; set; }
 }

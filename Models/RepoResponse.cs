@@ -7,33 +7,6 @@ using System.Threading.Tasks;
 
 namespace DoreanStore.Models;
 
-
-
-/*
-
-public DeDE[] deDE { get; set; }
-public EnGB[] enGB { get; set; }
-
-public class DeDE
-{
-public string name { get; set; }
-public string sha256 { get; set; }
-public int size { get; set; }
-}
-
-public class EnGB
-{
-public string name { get; set; }
-public string sha256 { get; set; }
-public int size { get; set; }
-}
-
- */
-
-
-
-
-
 public class RepoResponse
 {
     [JsonProperty("repo")]

@@ -28,6 +28,7 @@ namespace DoreanStore.Services
         /// <returns>Path to the saved file</returns>
         public async Task<string> DownloadIndex()
         {
+            Debug.WriteLine("downloading index");
             string uri = @"https://f-droid.org/repo/index-v2.json";
             string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, "indexJson");
             if (System.IO.File.Exists(pathUri))
@@ -39,6 +40,8 @@ namespace DoreanStore.Services
                     await s.CopyToAsync(fs);
                 }
             }
+            Debug.WriteLine("finished downloading");
+
             return pathUri;
         }
     }

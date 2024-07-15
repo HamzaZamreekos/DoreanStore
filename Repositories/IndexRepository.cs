@@ -3,6 +3,7 @@ using DoreanStore.Services;
 using Realms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -64,6 +65,17 @@ namespace DoreanStore.Repositories
                         applicationInfo.IconUrl = item.Value.Metadata.IconInLanguages.First().Value.Name;
                     }
                 }
+                if (item.Value!.Metadata.NameInLanguages is not null)
+                {
+                    string? result;
+                    bool exists = item.Value.Metadata.NameInLanguages.TryGetValue("en-US", out result);
+                    if (exists)
+                        applicationInfo.DisplayName = result;
+                    else
+                    {
+                        applicationInfo.DisplayName = item.Value.Metadata.NameInLanguages.First().Value;
+                    }
+                }
                 //if (item.Value.Metadata.IconInLanguages is not null)
                 //    applicationInfo.IconUrl = item.Value.Metadata.IconInLanguages["en-US"]!.Name;
 
@@ -89,6 +101,8 @@ namespace DoreanStore.Repositories
                 {
                     realm.Add(applicationInfo, update: true);
                 });
+                Debug.WriteLine("Added record.....................................");
+
             }
         }
     }

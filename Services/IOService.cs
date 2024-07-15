@@ -2,6 +2,7 @@
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +57,8 @@ namespace DoreanStore.Services
         /// <returns>The deserialized index file</returns>
         public async Task<RepoResponse?> DeserializeFdroidRepoAsync()
         {
+            Debug.WriteLine("deserialzing");
+
             RepoResponse response;
             string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, "indexJson");
 

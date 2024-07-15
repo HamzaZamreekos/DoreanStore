@@ -58,7 +58,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="resources\raw\dbe.realm" />
+      <None Remove="Resources\Raw\dbe.realm" />
+      <None Remove="Resources\Raw\dbe.realm.lock" />
     </ItemGroup>
 
     <ItemGroup>
@@ -66,12 +67,12 @@
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="MudBlazor" Version="7.1.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Realm" Version="12.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\Raw\" />
       <Folder Include="wwwroot\Db\" />
     </ItemGroup>
 

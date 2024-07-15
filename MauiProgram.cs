@@ -1,6 +1,7 @@
 ﻿using DoreanStore.Repositories;
 using DoreanStore.Services;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Services;
 
 namespace DoreanStore
 {
@@ -16,6 +17,7 @@ namespace DoreanStore
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
+            builder.Services.AddMudServices();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddScoped<FdroidService>();
             builder.Services.AddScoped<IOService>();
