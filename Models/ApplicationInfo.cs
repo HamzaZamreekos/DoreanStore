@@ -18,10 +18,10 @@ public partial class ApplicationInfo : RealmObject
     public string? IconUrl { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
     public DateTimeOffset ReleaseDate { get; set; }
-    public IList<Apk> Apks { get; } = new List<Apk>();
-    public IList<string>? Categories { get;} = new List<string>();
-    public IList<string>? ScreenshotsUrl { get; } = new List<string>();
-    public IList<string>? Permissions { get; } = new List<string>();
+    public IList<Apk> Apks { get; }
+    public IList<string>? Categories { get;} 
+    public IList<string>? ScreenshotsUrl { get; }
+    public IList<string>? Permissions { get; } 
 
 }
 public partial class Apk : RealmObject

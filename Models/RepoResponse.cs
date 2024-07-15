@@ -54,6 +54,8 @@ public class Metadata
     public ulong? LastUpdated { get; set; }
     [JsonProperty("added")]
     public ulong? Added { get; set; }
+    [JsonProperty("authorName")]
+    public string? AuthorName { get; set; }
     [JsonProperty("categories")]
     public List<string> Categories { get; set; }
     [JsonProperty("changelog")]
