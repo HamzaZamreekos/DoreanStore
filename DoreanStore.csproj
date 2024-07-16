@@ -25,7 +25,7 @@
         <ApplicationTitle>DoreanStore</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.doreanstore</ApplicationId>
+        <ApplicationId>com.HamzaZamreek.DoreanStore</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
@@ -41,9 +41,9 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
 
-        <!-- Splash Screen -->
+		<!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 
         <!-- Images -->
@@ -58,8 +58,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\AppIcon\appicon.svg" />
       <None Remove="Resources\Raw\dbe.realm" />
       <None Remove="Resources\Raw\dbe.realm.lock" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Resources\AppIcon\appicon.svg">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

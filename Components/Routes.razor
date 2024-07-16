@@ -14,7 +14,7 @@
     [Inject]
     private FdroidService Fdroid{ get; set; }
     protected override async Task OnInitializedAsync(){
-        await io.CopyFileToAppDataDirectory("dbe.realm", false);
+        await io.CopyFileToAppDataDirectory("dbe.realm", overwrite: false);
         // await io.CopyFileToAppDataDirectory("", true);
         // await Fdroid.DownloadIndex();
         // await io.DeserializeFdroidRepoAsync();

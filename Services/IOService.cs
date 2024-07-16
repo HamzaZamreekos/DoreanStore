@@ -76,13 +76,18 @@ namespace DoreanStore.Services
         /// <returns></returns>
         public async Task CopyFileToAppDataDirectory(string filename, bool overwrite)
         {
+            Debug.WriteLine("Copying to output");
             var newPath = Path.Combine(FileSystem.Current.AppDataDirectory, filename);
+            if (!System.IO.File.Exists(newPath))
+                Debug.WriteLine("file doesn't already exist");
+            
             if(!overwrite)
                 if (System.IO.File.Exists(newPath))
                     return; 
             Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
             FileStream outputStream = System.IO.File.Create(newPath);
             await inputStream.CopyToAsync(outputStream);
+            Debug.WriteLine("Done copyinh");
             outputStream.Dispose();
             inputStream.Dispose();
         }

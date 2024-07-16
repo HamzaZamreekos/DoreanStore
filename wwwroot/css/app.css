@@ -4,6 +4,7 @@
 body {
     background-color: #fefefe;
     background-image: repeating-radial-gradient( circle at 54px 32px, transparent 0, #fefefe 24px ), repeating-linear-gradient(#5394fd55, #5394fd);
+    min-height:100rem;
 }
 a, .btn-link {
     color: #006bb7;
