@@ -1,7 +1,11 @@
-﻿@if(App.IconUrl is not null)
+﻿@inject NavigationManager _nav
+@inject IDialogService _diag
+@using DoreanStore.Components.Apps
+
+@if(App.IconUrl is not null)
 {
     string imageUrl = LinkProvider.RepoLink + App.IconUrl;
-    <MudCard Elevation="4" Style="max-width:100px;min-width:100px; min-height:143px; border:20px;border-color:#5394fd">
+    <MudCard @onclick="OpenDialogAsync" Elevation="4" Style="max-width:100px;min-width:100px; min-height:143px;border-style: solid; border-width:1px;border-color:#5394fd">
         <MudCardMedia Image="@imageUrl" Height="60" />
         <MudCardContent>
             @if (App.DisplayName is not null)
@@ -36,4 +40,19 @@
 @code {
     [Parameter]
     public ApplicationInfo App{ get; set; }
+    public string appLink = string.Empty;
+    private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
+    protected override void OnInitialized()
+    {
+        appLink = $"/App/{App.UniqueName}";
+    }
+    private Task OpenDialogAsync()
+    {
+        var parameters = new DialogParameters<AppPage>
+        {
+            { x => x.App, App}
+        };
+
+        return _diag.ShowAsync<AppPage>("Simple Dialog", parameters, _fullScreen);
+    }
 }

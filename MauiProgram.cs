@@ -16,7 +16,7 @@ namespace DoreanStore
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-
+            builder.Services.AddMudBlazorDialog();
             builder.Services.AddMudServices();
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddScoped<FdroidService>();

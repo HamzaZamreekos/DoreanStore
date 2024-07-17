@@ -1,0 +1,12 @@
+﻿@using DoreanStore.Repositories
+@using DoreanStore.Models
+
+@if (App is not null)
+{
+    @App.UniqueName
+}
+@code {
+    [Parameter]
+    public ApplicationInfo App{ get; set; }
+
+}

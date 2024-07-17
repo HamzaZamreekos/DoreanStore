@@ -1,14 +1,9 @@
 ﻿@page "/"
-@inject FdroidService _is
-@inject IOService _io
-@inject GenericRepository<ApplicationInfo> _repo
-@using DoreanStore.Models
-@using DoreanStore.Repositories
-@using DoreanStore.Services
-@inject IJSRuntime js
 @inject GenericRepository<ApplicationInfo> repo
 @using DoreanStore.Models
 @using DoreanStore.Repositories
+@using DoreanStore.Services
+
 @if (applicationInfos is not null)
 {
     <div style="display:flex;align-content:center;justify-content:center;flex-direction:row; flex-wrap:wrap;gap:5px;justify-items:center; align-items:center">
@@ -21,10 +16,18 @@
 
 @code {
     private IEnumerable<ApplicationInfo> applicationInfos;
+    private IEnumerable<string> categories;
 
     protected override async Task OnInitializedAsync()
     {
-        applicationInfos = repo.GetAll()!.Take(100).ToList();
-        StateHasChanged();
+
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            applicationInfos = repo.GetAll()!.Take(500).ToList();
+            StateHasChanged();
+        }
     }
 }
