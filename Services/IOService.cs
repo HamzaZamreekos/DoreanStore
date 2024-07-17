@@ -1,4 +1,6 @@
 ﻿using DoreanStore.Models;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Maui;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using System;
 using System.Collections.Generic;
@@ -6,49 +8,46 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+#if ANDROID
+using Android.App;
+using Android.Content;
+using Android.Content.PM;
+using Android.OS;
+using Android.Widget;
+using System.Reflection;
+#endif
 
 namespace DoreanStore.Services
 {
-    public class IOService
+
+    [Activity(Label = "App updater", LaunchMode = LaunchMode.SingleTop)]
+    public class IOService : Android.App.Activity
     {
         private readonly JsonService jsonService;
-        public IOService(JsonService jsonService)
-        {
-            this.jsonService = jsonService;
-        }
+        //public IOService(JsonService jsonService)
+        //{
+        //    this.jsonService = jsonService;
+        //}
         /// <summary>
         /// Requests permissions to install apps if persmission wasn't granted before, Then installs the apk
         /// </summary>
         /// <param name="name"></param>
-        public void InstallApk(string name)
+        public void InstallApk(string apkFileName)
         {
-#if Android
-            string _apkPath = Path.Combine(FileSystem.Current.AppDataDirectory, name);
-              var packageManager = Platform.CurrentActivity!.PackageManager;
-            var res = packageManager!.CanRequestPackageInstalls();
-            if (!res)
-            {
-                Platform.CurrentActivity.StartActivity(new Android.Content.Intent(Android.Provider.Settings.ActionManageUnknownAppSources!, Android.Net.Uri.Parse("package:" + AppInfo.Current.PackageName)));
-            }else
-            {
-               
-                var context = Platform.AppContext;
-                Java.IO.File apkFile = new Java.IO.File(_apkPath);
-                var res1=apkFile.Exists();
-                Android.Content.Intent intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
+#if ANDROID
+            string apkFilePath = Path.Combine(FileSystem.Current.AppDataDirectory, apkFileName);
+            Java.IO.File apkFile = new Java.IO.File(apkFilePath);
 
+            // Use the FileProvider to get a content URI for the file
+            Android.Net.Uri apkUri = FileProvider.GetUriForFile(Android.App.Application.Context, "[Project.Application].fileprovider", apkFile);
 
-               var uri = FileProvider.GetUriForFile(context, context.ApplicationContext!.PackageName + ".fileProvider", apkFile);
+            // Create an Intent to install the APK
+            Intent intent = new Intent(Intent.ActionView);
+            intent.SetDataAndType(apkUri, "application/vnd.android.package-archive");
+            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.GrantReadUriPermission);
 
-                intent.SetDataAndType(uri, "application/vnd.android.package-archive");
-                intent.AddFlags(Android.Content.ActivityFlags.NewTask);
-                intent.AddFlags(Android.Content.ActivityFlags.GrantReadUriPermission);
-                intent.AddFlags(Android.Content.ActivityFlags.ClearTop);
-                intent.PutExtra(Android.Content.Intent.ExtraNotUnknownSource, true);
-                intent.PutExtra("apkPath", _apkPath);
-
-               Platform.CurrentActivity.StartActivityForResult(intent, 1);
-            }
+            // Start the installation process
+            Android.App.Application.Context.StartActivity(intent);
 #endif
         }
         /// <summary>
@@ -57,7 +56,7 @@ namespace DoreanStore.Services
         /// <returns>The deserialized index file</returns>
         public async Task<RepoResponse?> DeserializeFdroidRepoAsync()
         {
-            Debug.WriteLine("deserialzing");
+            //Debug.WriteLine("deserialzing");
 
             RepoResponse response;
             string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, "indexJson");
@@ -76,10 +75,7 @@ namespace DoreanStore.Services
         /// <returns></returns>
         public async Task CopyFileToAppDataDirectory(string filename, bool overwrite)
         {
-            Debug.WriteLine("Copying to output");
             var newPath = Path.Combine(FileSystem.Current.AppDataDirectory, filename);
-            if (!System.IO.File.Exists(newPath))
-                Debug.WriteLine("file doesn't already exist");
             
             if(!overwrite)
                 if (System.IO.File.Exists(newPath))
@@ -87,7 +83,6 @@ namespace DoreanStore.Services
             Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
             FileStream outputStream = System.IO.File.Create(newPath);
             await inputStream.CopyToAsync(outputStream);
-            Debug.WriteLine("Done copyinh");
             outputStream.Dispose();
             inputStream.Dispose();
         }

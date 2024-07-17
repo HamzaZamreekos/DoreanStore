@@ -1,12 +1,87 @@
 ﻿@using DoreanStore.Repositories
 @using DoreanStore.Models
+@using System.Net
+@inject ISnackbar snackbar
+@inject IOService io
 
-@if (App is not null)
-{
-    @App.UniqueName
-}
+<MudDialog>
+    <TitleContent>
+        Application details
+    </TitleContent>
+    <DialogContent>
+        @if (App is not null)
+        {
+            string imageUrl = LinkProvider.RepoLink + App.IconUrl;
+            <div style="display:flex;flex-direction:column;justify-content:space-between">
+                <div style="display:flex;flex-direction:row;">
+                    <img src="@imageUrl" style="width:80px;height:80px;border-radius:2px;" />
+                    <div style="margin-left:10px">
+                        <div><b>@App.DisplayName</b></div>
+                        <div>@App.Summary</div>
+                    </div>
+                </div>
+                <div>
+                    @if(App.ScreenshotsUrl is not null && App.ScreenshotsUrl.Count > 0)
+                    {
+                        <MudCarousel Style="height:300px;width:90%;margin-top:10px;margin-bottom:10px" ShowArrows="false" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="true" TData="object">
+                            @foreach(var pic in App.ScreenshotsUrl)
+                            {
+                                string link = LinkProvider.RepoLink + pic;
+                                <MudCarouselItem Transition="Transition.Slide">
+                                    <div style="display:flex;justify-content:center;height:100%;align-content:center" >
+                                        <img src="@link" style="width:contain;height:300px"/>
+                                    </div>
+                                </MudCarouselItem>
+                            }
+                        </MudCarousel>
+                    }
+                </div>
+                <div>
+                    @((MarkupString)App.Description)
+                </div>
+            </div>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Disabled="downloading" Variant="Variant.Filled" FullWidth Color="Color.Primary" OnClick="Download">@DownloadButtonText</MudButton>
+    </DialogActions>
+</MudDialog>
 @code {
     [Parameter]
+    EventCallback<string> downloadEvent { set; set; }
+    [Parameter]
     public ApplicationInfo App{ get; set; }
+    public string DownloadButtonText = "Download latest";
+    bool downloading = false;
 
+    public async Task Download()
+    {
+        string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, App.DisplayName);
+        var _ = App.Apks.GetEnumerator().MoveNext;
+        downloadEvent.InvokeAsync(App.Apks[0].Url);
+        try
+        {
+            using (var client = new HttpClientDownloadWithProgress(LinkProvider.RepoLink + App.Apks[0].Url, pathUri))
+            {
+                downloading = true;
+                client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+                {
+                    // Console.WriteLine($"{progressPercentage}% ({totalBytesDownloaded}/{totalFileSize})");
+                    DownloadButtonText = Convert.ToDouble(totalBytesDownloaded) / 1000000d + "MB" + " - " + progressPercentage.ToString()! + "%";
+                    InvokeAsync(StateHasChanged);
+                    if(progressPercentage == 100)
+                    {
+                        DownloadButtonText = "Installing";
+                        InvokeAsync(StateHasChanged);
+                        io.InstallApk(App.DisplayName);
+                        DownloadButtonText = "Done!";
+                        downloading = false;
+                        InvokeAsync(StateHasChanged);
+                    }
+                };
+                await client.StartDownload();
+            }
+        }
+        catch (Exception ex) { snackbar.Add("Download failed", Severity.Error); }
+    }
 }
