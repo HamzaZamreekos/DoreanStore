@@ -21,6 +21,12 @@ namespace DoreanStore.Repositories
             string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, dbName);
             realm = Realm.GetInstance(new RealmConfiguration(pathUri));
         }
+        public async Task GetCategories()
+        {
+
+        }
+
+
         public async Task ConvertIndexToAppInfoAndSave()
         {
             var index = await _io.DeserializeFdroidRepoAsync();
@@ -100,8 +106,9 @@ namespace DoreanStore.Repositories
                 await realm.WriteAsync(() =>
                 {
                     realm.Add(applicationInfo, update: true);
+                    if(applicationInfo.Categories.Any(x=> realm.All<Category>().Any(y=> x == y.Name)))
+                    applicationInfo.Categories.ToList().ForEach(x => realm.Add(new Category { Name = x }, update: true));
                 });
-
             }
         }
     }
