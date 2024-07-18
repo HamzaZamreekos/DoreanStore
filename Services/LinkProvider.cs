@@ -8,6 +8,6 @@ namespace DoreanStore.Services
 {
     public class LinkProvider
     {
-        public static string RepoLink { get; set; } = "https://f-droid.org/repo/";
+        public static string RepoLink { get; set; } = "https://f-droid.org/repo";
     }
 }

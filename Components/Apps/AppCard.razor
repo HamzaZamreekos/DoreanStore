@@ -1,6 +1,7 @@
 ﻿@inject NavigationManager _nav
 @inject IDialogService _diag
 @using DoreanStore.Components.Apps
+@using System.Diagnostics;
 
 @if(App.IconUrl is not null)
 {
@@ -35,6 +36,10 @@
             }
         </MudCardContent>
     </MudCard>
+    @if (downloading && ApplicationState.DownloadClient.downloadUrl == appLink)
+    {
+        <div>DOWNLOADING THIS BITCH.</div>
+    }
 }
 
 @code {
@@ -42,8 +47,16 @@
     public ApplicationInfo App{ get; set; }
     public string appLink = string.Empty;
     private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
+    bool downloading = false;
+
     protected override void OnInitialized()
     {
+        // ApplicationState.ProgressEvent += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
+        // {
+        //     Debug.WriteLine("Hello from AppCard");
+        //     downloading = true;
+        //     InvokeAsync(StateHasChanged);
+        // };
         appLink = $"/App/{App.UniqueName}";
     }
     private Task OpenDialogAsync()

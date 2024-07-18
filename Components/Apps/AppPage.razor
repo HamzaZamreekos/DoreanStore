@@ -1,6 +1,8 @@
 ﻿@using DoreanStore.Repositories
 @using DoreanStore.Models
 @using System.Net
+@using System.Diagnostics;
+
 @inject ISnackbar snackbar
 @inject IOService io
 
@@ -43,45 +45,39 @@
         }
     </DialogContent>
     <DialogActions>
-        <MudButton Disabled="downloading" Variant="Variant.Filled" FullWidth Color="Color.Primary" OnClick="Download">@DownloadButtonText</MudButton>
+        <MudButton Disabled="ApplicationState.DownloadClient.Downloading" Variant="Variant.Filled" FullWidth Color="Color.Primary" OnClick="Download">@DownloadButtonText</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
     [Parameter]
-    EventCallback<string> downloadEvent { set; set; }
-    [Parameter]
     public ApplicationInfo App{ get; set; }
     public string DownloadButtonText = "Download latest";
     bool downloading = false;
-
+    public void ProgressEventRaised(object sender, EventArgs e)
+    {
+        Debug.WriteLine("Hello from AppPage");
+            // Console.WriteLine($"{progressPercentage}% ({totalBytesDownloaded}/{totalFileSize})");
+            DownloadButtonText = string.Format("{0:D2}", (Convert.ToDouble(ApplicationState.totalBytesDownloaded) / 1000000d).ToString()) + "MB" + " - " + ApplicationState.progressPercentage.ToString()! + "%";
+            if (ApplicationState.progressPercentage == 100)
+            {
+                DownloadButtonText = "Installing";
+                io.InstallApk(App.DisplayName);
+                DownloadButtonText = "Done!";
+                downloading = false;
+            }
+            InvokeAsync(StateHasChanged);
+    }
+    protected override void OnInitialized()
+    {
+        ApplicationState.ProgressEvent += ProgressEventRaised;
+    }
     public async Task Download()
     {
         string pathUri = Path.Combine(FileSystem.Current.AppDataDirectory, App.DisplayName);
         var _ = App.Apks.GetEnumerator().MoveNext;
-        downloadEvent.InvokeAsync(App.Apks[0].Url);
-        try
-        {
-            using (var client = new HttpClientDownloadWithProgress(LinkProvider.RepoLink + App.Apks[0].Url, pathUri))
-            {
-                downloading = true;
-                client.ProgressChanged += (totalFileSize, totalBytesDownloaded, progressPercentage) =>
-                {
-                    // Console.WriteLine($"{progressPercentage}% ({totalBytesDownloaded}/{totalFileSize})");
-                    DownloadButtonText = Convert.ToDouble(totalBytesDownloaded) / 1000000d + "MB" + " - " + progressPercentage.ToString()! + "%";
-                    InvokeAsync(StateHasChanged);
-                    if(progressPercentage == 100)
-                    {
-                        DownloadButtonText = "Installing";
-                        InvokeAsync(StateHasChanged);
-                        io.InstallApk(App.DisplayName);
-                        DownloadButtonText = "Done!";
-                        downloading = false;
-                        InvokeAsync(StateHasChanged);
-                    }
-                };
-                await client.StartDownload();
-            }
-        }
-        catch (Exception ex) { snackbar.Add("Download failed", Severity.Error); }
+            await ApplicationState.DownloadClient.StartDownload(LinkProvider.RepoLink + App.Apks[0].Url, pathUri);
+            downloading = true;
+            ApplicationState.AppBeingdownloadedName = App.UniqueName;
+        
     }
 }
